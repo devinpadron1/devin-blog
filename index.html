@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Devin&apos;s Notes</title>
+    <meta
+      name="description"
+      content="A lightweight space for Devin to publish plain-text friendly blog posts."
+    />
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        margin: 0 auto;
+        padding: 2.5rem 1.5rem 4rem;
+        max-width: 46rem;
+        line-height: 1.6;
+      }
+
+      header h1 {
+        margin-bottom: 0.25rem;
+      }
+
+      header p {
+        margin-top: 0;
+        color: #555;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        display: flex;
+        gap: 1.5rem;
+        align-items: baseline;
+      }
+
+      li + li {
+        margin-top: 0.75rem;
+      }
+
+      time {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        font-size: 0.85rem;
+        color: #666;
+        white-space: nowrap;
+      }
+
+      .post-title {
+        font-size: 1rem;
+        font-weight: 500;
+      }
+
+      footer {
+        margin-top: 3rem;
+        font-size: 0.85rem;
+        color: #777;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        header p,
+        time,
+        footer {
+          color: #aaa;
+        }
+
+        li + li {
+          border-color: rgba(255, 255, 255, 0.1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Devin&apos;s Notes</h1>
+      <p>About me.</p>
+    </header>
+    <main>
+      <section id="posts">
+        <h2>Posts</h2>
+        <p id="loading">Loading posts…</p>
+        <ul id="post-list" hidden></ul>
+        <p id="empty" hidden>No posts yet. Check back soon!</p>
+        <p id="error" hidden>
+          Couldn&apos;t load posts. Make sure <code>posts.json</code> exists.
+        </p>
+      </section>
+    </main>
+    <footer>
+    </footer>
+    <script>
+      async function loadPosts() {
+        const loading = document.getElementById("loading");
+        const list = document.getElementById("post-list");
+        const empty = document.getElementById("empty");
+        const error = document.getElementById("error");
+
+        try {
+          const response = await fetch("posts.json", {
+            cache: "no-store",
+          });
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const posts = await response.json();
+          const normalized = Array.isArray(posts)
+            ? posts.filter((entry) => entry && entry.title)
+            : [];
+          loading.hidden = true;
+
+          if (normalized.length === 0) {
+            empty.hidden = false;
+            return;
+          }
+
+          const fragment = document.createDocumentFragment();
+
+          normalized.forEach((post) => {
+            const item = document.createElement("li");
+            const link = document.createElement("a");
+            const date = document.createElement("time");
+
+            const slug = post.slug;
+            const target =
+              post.url ||
+              (slug ? `post.html?post=${encodeURIComponent(slug)}` : null);
+
+            if (target) {
+              link.href = target;
+            } else {
+              link.setAttribute("role", "presentation");
+            }
+
+            if (post.date) {
+              date.textContent = new Date(post.date).toLocaleDateString(
+                undefined,
+                {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                }
+              );
+              date.dateTime = post.date;
+            }
+
+            item.appendChild(date);
+            if (target) {
+              link.textContent = post.title;
+              link.className = "post-title";
+              item.appendChild(link);
+            } else {
+              const heading = document.createElement("div");
+              heading.className = "post-title";
+              heading.textContent = post.title;
+              item.appendChild(heading);
+            }
+            fragment.appendChild(item);
+          });
+
+          list.appendChild(fragment);
+          list.hidden = false;
+        } catch (err) {
+          console.error(err);
+          loading.hidden = true;
+          error.hidden = false;
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", loadPosts);
+    </script>
+  </body>
+</html>
