@@ -311,6 +311,16 @@
         return html.join("\n");
       }
 
+      function formatDisplayDate(rawDate) {
+        const match = String(rawDate).trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+        if (!match) {
+          return rawDate;
+        }
+
+        const [, year, month, day] = match;
+        return `${month.padStart(2, "0")}/${day.padStart(2, "0")}/${year}`;
+      }
+
       async function loadPost() {
         const params = new URLSearchParams(window.location.search);
         const rawSlug = params.get("post") || params.get("slug");
@@ -360,15 +370,7 @@
           titleEl.textContent = pageTitle;
 
           if (meta.date) {
-            const formatted = new Date(meta.date).toLocaleDateString(
-              undefined,
-              {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              }
-            );
-            dateEl.textContent = formatted;
+            dateEl.textContent = formatDisplayDate(meta.date);
             dateEl.dateTime = meta.date;
             dateEl.hidden = false;
           } else {
