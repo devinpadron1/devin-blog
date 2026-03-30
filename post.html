@@ -191,7 +191,10 @@
           if (paragraphBuffer.length === 0) {
             return;
           }
-          const content = renderInline(paragraphBuffer.join(" ").trim());
+          const content = paragraphBuffer
+            .map((line) => renderInline(line.trim()))
+.join("<br>\n")
+.trim();
           if (content) {
             html.push(`<p>${content}</p>`);
           }
