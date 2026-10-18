@@ -1,3 +1,5 @@
+# The Fundamentals
+
 Theres a lot of AI noise which has led me to reflect on what the fundamentals are.
 
 Fundamentals are things that are true across time

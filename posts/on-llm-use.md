@@ -1,3 +1,5 @@
+# On LLM Use
+
 Some reflections on 1+ year of heavy LLM usage:
  
 - LLMs are very good at synthesizing information.
