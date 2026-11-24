@@ -73,6 +73,16 @@
         color: inherit;
       }
 
+      a:hover {
+        color: #2f6b3a;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        a:hover {
+          color: #7fbf8e;
+        }
+      }
+
       ul {
         list-style: none;
         padding: 0;
@@ -109,6 +119,12 @@
         gap: 1.25rem;
       }
 
+      /* Forest green name and section header, matching post pages. */
+      header h1,
+      #posts h2 {
+        color: #2f6b3a;
+      }
+
       @media (prefers-color-scheme: dark) {
         header p,
         time,
@@ -119,13 +135,18 @@
         li + li {
           border-color: rgba(255, 255, 255, 0.1);
         }
+
+        header h1,
+        #posts h2 {
+          color: #7fbf8e;
+        }
       }
     </style>
   </head>
   <body>
     <header>
       <h1>Devin Padrón</h1>
-      <p>I&apos;m a husband, girl-dad of 2, and software engineer at Blue Origin. Currently working on agentic systems. In a previous life, I was a mechanical design engineer.</p>
+      <p>Husband, girl-dad of 2, and software engineer at Blue Origin. Currently working on the GenAI platform. In a previous life, I was a mechanical design engineer.</p>
     </header>
     <main>
       <section id="posts">

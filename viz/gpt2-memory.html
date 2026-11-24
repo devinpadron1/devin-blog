@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GPT-2 memory</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light dark;
+    --ink: #1c1c1c; --dim: #6b6b66; --line: rgba(0,0,0,.14);
+    --w: #2f6b3a; --kv: #7fa886; --act: #8a8a82; --rt: #a29d90;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #e8e6e1; --dim: #9a9890; --line: rgba(255,255,255,.14);
+      --w: #7fbf8e; --kv: #4a7d55; --act: #7d7b75; --rt: #6b6963;
+    }
+  }
+  html, body { margin: 0; background: transparent; }
+  body {
+    font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    font-size: 15px; line-height: 1.5; color: var(--ink);
+    padding: 4px 0;
+  }
+  .bar { display: flex; gap: 2px; height: 24px; border-radius: 5px; overflow: hidden; }
+  .scale { display: flex; justify-content: space-between; color: var(--dim); font-size: 12px; margin-top: 4px; }
+  .w { background: var(--w); }
+  .kv { background: var(--kv); }
+  .act { background: repeating-linear-gradient(45deg, var(--act) 0 3px, transparent 3px 7px); }
+  .rt { background: var(--rt); }
+  .leg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 12px; }
+  @media (max-width: 520px) { .leg { grid-template-columns: repeat(2, 1fr); } }
+  .li { display: flex; gap: 10px; align-items: flex-start; }
+  .sw { flex: none; width: 24px; height: 24px; border-radius: 4px; border: 1px solid var(--line); box-sizing: border-box; }
+  .li b { display: block; font-weight: 600; }
+  .li span { color: var(--dim); font-size: 13px; }
+  .sz { display: block; font-style: normal; white-space: nowrap; }
+  .tot { margin-top: 16px; color: var(--dim); }
+  .tot b { color: var(--ink); }
+</style>
+</head>
+<body>
+  <!-- GPT-2 124M, fp32, 1,024-token context (reserved up front). Sizes in MB.
+       KV cache = 2 (K and V) × 12 layers × 768 × 4 bytes × 1,024 tokens ≈ 75 MB. -->
+  <div class="bar">
+    <div class="w" style="flex:496"></div>
+    <div class="kv" style="flex:75"></div>
+    <div class="act" style="flex:50"></div>
+    <div class="rt" style="flex:500"></div>
+  </div>
+  <div class="scale"><span>0</span><span>1.1 GB</span></div>
+  <div class="leg">
+    <div class="li"><div class="sw w"></div><div><b>weights</b><span>124M × 4 bytes <i class="sz">(~496 MB)</i></span></div></div>
+    <div class="li"><div class="sw kv"></div><div><b>KV cache</b><span>1,024 tokens <i class="sz">(~75 MB)</i></span></div></div>
+    <div class="li"><div class="sw act"></div><div><b>activations</b><span>scratch space <i class="sz">(~50 MB)</i></span></div></div>
+    <div class="li"><div class="sw rt"></div><div><b>runtime</b><span>engine + driver <i class="sz">(~500 MB)</i></span></div></div>
+  </div>
+  <div class="tot">GPT-2 (124M, fp32) total: <b>~1.1 GB</b></div>
+</body>
+</html>
