@@ -14,3 +14,5 @@ Drafts in `drafts/` aren't listed.
 ## Local preview
 
 Run `node scripts/build-posts.mjs` to generate `posts.json`, then right-click `index.html` and click `Open with Live Server` (VSCode).
+
+To also see drafts locally, run `node scripts/build-posts.mjs --drafts`. They show up marked "(draft)". The deploy builds without the flag, so drafts never appear in prod.

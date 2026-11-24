@@ -489,13 +489,16 @@
 
           if (meta.date) {
             dateEl.textContent = formatDisplayDate(meta.date);
+            if (meta.draft) dateEl.textContent += " · draft";
             dateEl.dateTime = meta.date;
             dateEl.hidden = false;
           } else {
             dateEl.hidden = true;
           }
 
-          const markdownResponse = await fetch(`posts/${slug}.md`, {
+          // Local drafts carry their own path (see build-posts.mjs --drafts).
+          const source = meta.path ? encodeURI(meta.path) : `posts/${slug}.md`;
+          const markdownResponse = await fetch(source, {
             cache: "no-store",
           });
 

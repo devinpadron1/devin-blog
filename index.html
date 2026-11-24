@@ -226,6 +226,7 @@
             item.appendChild(date);
             if (target) {
               link.textContent = post.title;
+              if (post.draft) link.textContent += " (draft)";
               link.className = "post-title";
               item.appendChild(link);
             } else {
