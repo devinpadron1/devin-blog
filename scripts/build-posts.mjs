@@ -4,10 +4,12 @@
 //
 // Local only: `node scripts/build-posts.mjs --drafts` also lists drafts/*.md,
 // marked as drafts. The deploy runs without the flag, so drafts never reach prod.
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+// Drafts are dated by last edit; ones edited in the last week count as "active".
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 
 const includeDrafts = process.argv.includes("--drafts");
+const ACTIVE_DAYS = 7;
 
 const firstCommitDate = (file) => {
   const out = execFileSync(
@@ -30,9 +32,12 @@ const collect = (dir, draft) => {
       const file = `${dir}/${name}`;
       const heading = readFileSync(file, "utf8").match(/^#\s+(.+)$/m);
       const title = heading ? heading[1].trim() : base.replace(/-/g, " ");
-      const entry = { slug: draft ? toSlug(base) : base, title, date: firstCommitDate(file) };
+      if (!draft) return { slug: base, title, date: firstCommitDate(file) };
       // Drafts can have any filename, so record the real path to fetch.
-      return draft ? { ...entry, draft: true, path: file } : entry;
+      const edited = statSync(file).mtime;
+      const active = Date.now() - edited.getTime() < ACTIVE_DAYS * 864e5;
+      const date = edited.toISOString().slice(0, 10);
+      return { slug: toSlug(base), title, date, draft: true, active, path: file };
     });
 };
 

@@ -230,6 +230,10 @@
               date.textContent = formatDisplayDate(post.date);
               date.dateTime = post.date;
             }
+            // Drafts I'm not actively editing get a placeholder date.
+            if (post.draft && !post.active) {
+              date.textContent = "xx/xx/xxxx";
+            }
 
             item.appendChild(date);
             if (target) {
