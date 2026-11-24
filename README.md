@@ -15,4 +15,4 @@ Drafts in `drafts/` aren't listed.
 
 Run `node scripts/build-posts.mjs` to generate `posts.json`, then right-click `index.html` and click `Open with Live Server` (VSCode).
 
-To also see drafts locally, run `node scripts/build-posts.mjs --drafts`. They show up in a Drafts section below Posts, newest edit first. Drafts edited in the last 7 days show their date; older ones show `XX/XX/XXXX`. Re-run it to refresh. The deploy builds without the flag, so drafts never appear in prod.
+To also see drafts locally, run `node scripts/build-posts.mjs --drafts`. They show up in a Drafts section below Posts, newest edit first. Drafts edited in the last 7 days show their date; older ones show `__/__/____`. Re-run it to refresh. The deploy builds without the flag, so drafts never appear in prod.
