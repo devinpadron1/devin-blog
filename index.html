@@ -111,6 +111,24 @@
         font-weight: 500;
       }
 
+      /* Local only: drafts (from build-posts --drafts) sit left of posts. */
+      body:has(main.has-drafts) {
+        max-width: 64rem;
+      }
+
+      main.has-drafts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+      }
+
+      @media (max-width: 760px) {
+        main.has-drafts {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+      }
+
       footer {
         margin-top: 3rem;
         font-size: 0.85rem;
@@ -121,7 +139,7 @@
 
       /* Forest green name and section header, matching post pages. */
       header h1,
-      #posts h2 {
+      main h2 {
         color: #2f6b3a;
       }
 
@@ -137,7 +155,7 @@
         }
 
         header h1,
-        #posts h2 {
+        main h2 {
           color: #7fbf8e;
         }
       }
@@ -146,9 +164,13 @@
   <body>
     <header>
       <h1>Devin Padrón</h1>
-      <p>Husband, girl-dad of 2, and software engineer at Blue Origin. Currently working on the GenAI platform. In a previous life, I was a mechanical design engineer.</p>
+      <p>Husband, girl-dad of 2, and software engineer at Blue Origin. Currently working on the GenAI platform, used to work as a mechanical design engineer.</p>
     </header>
     <main>
+      <section id="drafts" hidden>
+        <h2>Drafts</h2>
+        <ul id="draft-list"></ul>
+      </section>
       <section id="posts">
         <h2>Posts</h2>
         <p id="loading">Loading posts…</p>
@@ -200,7 +222,10 @@
             return;
           }
 
+          const drafts = normalized.filter((post) => post.draft);
+          const published = normalized.filter((post) => !post.draft);
           const fragment = document.createDocumentFragment();
+          const draftFragment = document.createDocumentFragment();
 
           normalized.forEach((post) => {
             const item = document.createElement("li");
@@ -226,7 +251,6 @@
             item.appendChild(date);
             if (target) {
               link.textContent = post.title;
-              if (post.draft) link.textContent += " (draft)";
               link.className = "post-title";
               item.appendChild(link);
             } else {
@@ -235,11 +259,18 @@
               heading.textContent = post.title;
               item.appendChild(heading);
             }
-            fragment.appendChild(item);
+            (post.draft ? draftFragment : fragment).appendChild(item);
           });
 
           list.appendChild(fragment);
-          list.hidden = false;
+          list.hidden = published.length === 0;
+          empty.hidden = published.length > 0;
+
+          if (drafts.length > 0) {
+            document.getElementById("draft-list").appendChild(draftFragment);
+            document.getElementById("drafts").hidden = false;
+            document.querySelector("main").classList.add("has-drafts");
+          }
         } catch (err) {
           console.error(err);
           loading.hidden = true;
