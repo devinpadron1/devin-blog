@@ -111,24 +111,6 @@
         font-weight: 500;
       }
 
-      /* Local only: drafts (from build-posts --drafts) sit left of posts. */
-      body:has(main.has-drafts) {
-        max-width: 64rem;
-      }
-
-      main.has-drafts {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-      }
-
-      @media (max-width: 760px) {
-        main.has-drafts {
-          grid-template-columns: 1fr;
-          gap: 1rem;
-        }
-      }
-
       footer {
         margin-top: 3rem;
         font-size: 0.85rem;
@@ -167,10 +149,6 @@
       <p>Husband, girl-dad of 2, and software engineer at Blue Origin. Currently working on the GenAI platform, used to work as a mechanical design engineer.</p>
     </header>
     <main>
-      <section id="drafts" hidden>
-        <h2>Drafts</h2>
-        <ul id="draft-list"></ul>
-      </section>
       <section id="posts">
         <h2>Posts</h2>
         <p id="loading">Loading posts…</p>
@@ -179,6 +157,11 @@
         <p id="error" hidden>
           Couldn&apos;t load posts. Make sure <code>posts.json</code> exists.
         </p>
+      </section>
+      <!-- Local only: filled when posts.json is built with --drafts. -->
+      <section id="drafts" hidden>
+        <h2>Drafts</h2>
+        <ul id="draft-list"></ul>
       </section>
     </main>
     <footer>
@@ -269,7 +252,6 @@
           if (drafts.length > 0) {
             document.getElementById("draft-list").appendChild(draftFragment);
             document.getElementById("drafts").hidden = false;
-            document.querySelector("main").classList.add("has-drafts");
           }
         } catch (err) {
           console.error(err);
