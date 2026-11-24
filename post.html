@@ -488,7 +488,17 @@
 
           const pageTitle = meta.title || slug;
           document.title = `${pageTitle} · Devin Padrón`;
-          titleEl.textContent = pageTitle;
+          // Break the title after the first colon: "Series, Part 1:" / "Subtitle".
+          const colon = pageTitle.indexOf(": ");
+          if (colon === -1) {
+            titleEl.textContent = pageTitle;
+          } else {
+            titleEl.append(
+              pageTitle.slice(0, colon + 1),
+              document.createElement("br"),
+              pageTitle.slice(colon + 2)
+            );
+          }
 
           if (meta.date) {
             dateEl.textContent = formatDisplayDate(meta.date);
