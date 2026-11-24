@@ -276,7 +276,10 @@
 
         result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
           const safeUrl = escapeAttribute(url.trim());
-          return `<a href="${safeUrl}">${text}</a>`;
+          // External links open in a new tab; links within the site stay put.
+          const external = /^https?:\/\//i.test(url.trim());
+          const extra = external ? ' target="_blank" rel="noopener"' : "";
+          return `<a href="${safeUrl}"${extra}>${text}</a>`;
         });
 
         return result;
