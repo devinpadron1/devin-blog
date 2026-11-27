@@ -24,14 +24,14 @@
     padding: 4px 0;
   }
   /* The file reads top to bottom, in byte order. Not to scale. */
-  .wrap { display: grid; grid-template-columns: 120px 1fr; grid-template-rows: 52px 60px 120px; column-gap: 18px; row-gap: 3px; }
+  .wrap { display: grid; grid-template-columns: 120px auto; justify-content: center; grid-template-rows: 52px 60px 120px; column-gap: 18px; row-gap: 3px; }
   .file {
     grid-row: 1 / 4; position: relative; display: grid; grid-template-rows: subgrid;
-    clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 0 100%);
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
     border-radius: 4px;
   }
   .file::after { /* folded corner */
-    content: ""; position: absolute; top: 0; right: 0; width: 26px; height: 26px;
+    content: ""; position: absolute; top: 0; right: 0; width: 16px; height: 16px;
     background: linear-gradient(225deg, transparent 50%, var(--fold) 50%);
   }
   .len { background: var(--len); }
@@ -46,7 +46,7 @@
   .lab b { display: block; font-weight: 600; }
   .lab span { color: var(--dim); font-size: 13px; }
   .sz { font-style: normal; white-space: nowrap; }
-  .tot { margin-top: 14px; color: var(--dim); }
+  .tot { margin-top: 14px; text-align: center; color: var(--dim); }
   .tot b { color: var(--ink); }
 </style>
 </head>
