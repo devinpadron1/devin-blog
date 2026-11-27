@@ -8,13 +8,13 @@
 <style>
   :root {
     color-scheme: light dark;
-    --ink: #1c1c1c; --dim: #6b6b66; --line: rgba(0,0,0,.14);
-    --len: #2f6b3a; --hdr: #7fa886; --data: #a29d90;
+    --ink: #1c1c1c; --dim: #6b6b66; --line: rgba(0,0,0,.18);
+    --len: #2f6b3a; --hdr: #7fa886; --data: #a29d90; --fold: #d9d6cc;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --ink: #e8e6e1; --dim: #9a9890; --line: rgba(255,255,255,.14);
-      --len: #7fbf8e; --hdr: #4a7d55; --data: #6b6963;
+      --ink: #e8e6e1; --dim: #9a9890; --line: rgba(255,255,255,.18);
+      --len: #7fbf8e; --hdr: #4a7d55; --data: #6b6963; --fold: #3a3936;
     }
   }
   html, body { margin: 0; background: transparent; }
@@ -23,32 +23,41 @@
     font-size: 15px; line-height: 1.5; color: var(--ink);
     padding: 4px 0;
   }
-  /* Not to scale: the first two parts are tiny next to the weights. */
-  .bar { display: flex; gap: 2px; height: 24px; border-radius: 5px; overflow: hidden; }
-  .len { background: var(--len); flex: 0 0 6%; }
-  .hdr { background: var(--hdr); flex: 0 0 18%; }
-  .data { background: var(--data); flex: 1; }
-  .scale { display: flex; justify-content: space-between; color: var(--dim); font-size: 12px; margin-top: 4px; }
-  .leg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
-  @media (max-width: 520px) { .leg { grid-template-columns: 1fr; } }
-  .li { display: flex; gap: 10px; align-items: flex-start; }
-  .sw { flex: none; width: 24px; height: 24px; border-radius: 4px; }
-  .li b { display: block; font-weight: 600; }
-  .li span { color: var(--dim); font-size: 13px; }
-  .sz { display: block; font-style: normal; white-space: nowrap; }
-  .tot { margin-top: 16px; color: var(--dim); }
+  /* The file reads top to bottom, in byte order. Not to scale. */
+  .wrap { display: grid; grid-template-columns: 120px 1fr; grid-template-rows: 52px 60px 120px; column-gap: 18px; row-gap: 3px; }
+  .file {
+    grid-row: 1 / 4; position: relative; display: grid; grid-template-rows: subgrid;
+    clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 0 100%);
+    border-radius: 4px;
+  }
+  .file::after { /* folded corner */
+    content: ""; position: absolute; top: 0; right: 0; width: 26px; height: 26px;
+    background: linear-gradient(225deg, transparent 50%, var(--fold) 50%);
+  }
+  .len { background: var(--len); }
+  .hdr { background: var(--hdr); }
+  .data { background: var(--data); }
+  .file .data {
+    background-image: repeating-linear-gradient(180deg, transparent 0 9px, rgba(255,255,255,.18) 9px 10px);
+    background-color: var(--data);
+  }
+  .lab { align-self: center; display: flex; gap: 10px; align-items: flex-start; }
+  .lab::before { content: ""; flex: none; width: 14px; height: 0; margin-top: .75em; border-top: 1px solid var(--line); margin-left: -18px; }
+  .lab b { display: block; font-weight: 600; }
+  .lab span { color: var(--dim); font-size: 13px; }
+  .sz { font-style: normal; white-space: nowrap; }
+  .tot { margin-top: 14px; color: var(--dim); }
   .tot b { color: var(--ink); }
 </style>
 </head>
 <body>
   <!-- GPT-2 124M model.safetensors: 8 + 14,283 + 548,090,880 = 548,105,171 bytes. -->
-  <div class="bar"><div class="len"></div><div class="hdr"></div><div class="data"></div></div>
-  <div class="scale"><span>byte 0</span><span>not to scale</span></div>
-  <div class="leg">
-    <div class="li"><div class="sw len"></div><div><b>header length</b><span>one 64-bit integer <i class="sz">(8 bytes)</i></span></div></div>
-    <div class="li"><div class="sw hdr"></div><div><b>header</b><span>JSON map of tensors <i class="sz">(~14 KB)</i></span></div></div>
-    <div class="li"><div class="sw data"></div><div><b>weights</b><span>raw numbers, back to back <i class="sz">(~548 MB)</i></span></div></div>
+  <div class="wrap">
+    <div class="file"><div class="len"></div><div class="hdr"></div><div class="data"></div></div>
+    <div class="lab"><div><b>header length</b><span>one 64-bit integer <i class="sz">(8 bytes)</i></span></div></div>
+    <div class="lab"><div><b>header</b><span>JSON map of tensors <i class="sz">(~14 KB)</i></span></div></div>
+    <div class="lab"><div><b>weights</b><span>raw numbers, back to back <i class="sz">(~548 MB)</i></span></div></div>
   </div>
-  <div class="tot">GPT-2 (124M) <code>model.safetensors</code>: <b>~548 MB</b></div>
+  <div class="tot"><code>model.safetensors</code>: <b>~548 MB</b> · not to scale</div>
 </body>
 </html>
