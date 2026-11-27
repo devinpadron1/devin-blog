@@ -479,10 +479,10 @@
           const data = await metaResponse.json();
           const find = (entries) =>
             Array.isArray(entries) ? entries.find((item) => item.slug === slug) : null;
-          const post = find(data.posts);
-          const draft = post ? null : find(data.drafts);
-          const meta = post || draft;
-          const folder = post ? "posts" : "drafts";
+          const published = find(data.posts);
+          const draft = published ? null : find(data.drafts);
+          const meta = published || draft;
+          const folder = published ? "posts" : "drafts";
 
           if (!meta) {
             loading.hidden = true;
