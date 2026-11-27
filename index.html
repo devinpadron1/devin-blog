@@ -194,67 +194,38 @@
             throw new Error("Network response was not ok");
           }
 
-          const posts = await response.json();
-          const normalized = Array.isArray(posts)
-            ? posts.filter((entry) => entry && entry.title)
-            : [];
+          const data = await response.json();
+          const valid = (entries) =>
+            Array.isArray(entries)
+              ? entries.filter((entry) => entry && entry.slug && entry.title)
+              : [];
+          const published = valid(data.posts);
+          const drafts = valid(data.drafts);
           loading.hidden = true;
 
-          if (normalized.length === 0) {
-            empty.hidden = false;
-            return;
-          }
-
-          const drafts = normalized.filter((post) => post.draft);
-          const published = normalized.filter((post) => !post.draft);
-          const fragment = document.createDocumentFragment();
-          const draftFragment = document.createDocumentFragment();
-
-          normalized.forEach((post) => {
+          // Posts get a date column; drafts are just titles, newest edit first.
+          const toItem = (post) => {
             const item = document.createElement("li");
-            const link = document.createElement("a");
-            const date = document.createElement("time");
-
-            const slug = post.slug;
-            const target =
-              post.url ||
-              (slug ? `post.html?post=${encodeURIComponent(slug)}` : null);
-
-            if (target) {
-              link.href = target;
-            } else {
-              link.setAttribute("role", "presentation");
-            }
-
             if (post.date) {
+              const date = document.createElement("time");
               date.textContent = formatDisplayDate(post.date);
               date.dateTime = post.date;
+              item.appendChild(date);
             }
-            // Drafts I'm not actively editing get a placeholder date.
-            if (post.draft && !post.active) {
-              date.textContent = "__/__/____";
-            }
+            const link = document.createElement("a");
+            link.href = `post.html?post=${encodeURIComponent(post.slug)}`;
+            link.textContent = post.title;
+            link.className = "post-title";
+            item.appendChild(link);
+            return item;
+          };
 
-            item.appendChild(date);
-            if (target) {
-              link.textContent = post.title;
-              link.className = "post-title";
-              item.appendChild(link);
-            } else {
-              const heading = document.createElement("div");
-              heading.className = "post-title";
-              heading.textContent = post.title;
-              item.appendChild(heading);
-            }
-            (post.draft ? draftFragment : fragment).appendChild(item);
-          });
-
-          list.appendChild(fragment);
+          list.append(...published.map(toItem));
           list.hidden = published.length === 0;
           empty.hidden = published.length > 0;
 
           if (drafts.length > 0) {
-            document.getElementById("draft-list").appendChild(draftFragment);
+            document.getElementById("draft-list").append(...drafts.map(toItem));
             document.getElementById("drafts").hidden = false;
           }
         } catch (err) {
